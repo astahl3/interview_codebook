@@ -903,6 +903,7 @@ if __name__ == "__main__":
 ##############################################################################
 # 124. Best Time to Buy and Sell Stock IV [HARD]
 ##############################################################################    
+'''
 class Solution(object):
     def maxProfit(self, k, prices):
         """
@@ -936,3 +937,114 @@ def main():
    
 if __name__ == "__main__":
     main() 
+'''    
+##############################################################################
+# 149. Max Points on a Line [HARD]
+##############################################################################    
+'''
+import collections
+import math
+class Solution(object):
+    def maxPoints(self, points):
+        L = len(points)
+        lines = [] #[m, b] of y = m*x + b
+        nums = []
+        
+        if L <= 2:
+            return L 
+        
+        for j in range(0,L):
+            p1 = points[j]
+            k = j+1
+            while k < L:
+                p2 = points[k]
+                
+                if p2[0] != p1[0]:
+                    m = (p2[1]-p1[1]) / (p2[0]-p1[0])
+                    b = p2[1] - m*p2[0]
+                    line = [m,b]
+                    if line not in lines:
+                        lines.append(line)
+                else: # vertical line, store lines as [x location, 10^6]
+                    x_loc = p2[0]
+                    line = [x_loc, 10**6]
+                    if line not in lines:
+                        lines.append(line)
+                k += 1
+        
+        pts_per_line = [0]*len(lines)
+        for j in range(0,L):
+            k = 0
+            for l in lines:
+                p1 = points[j]
+                if l[1] == 10**6: # if vertical line
+                    if p1[0] == l[0]:
+                        pts_per_line[k] += 1
+                else: # not vertical line
+                    diff = p1[1] - (l[0]*p1[0]+l[1])
+                    if abs(diff) <= 0.000001:
+                        pts_per_line[k] += 1
+
+                k += 1
+        return max(pts_per_line)
+
+    def maxPoints2(self, points):
+        L = len(points)
+        if L <= 2:
+            return L
+        result = 2
+        for i in range(0, L):
+            cnt = collections.defaultdict(int)
+            for j in range(0, L):
+                if i != j:
+                    angle = math.atan2(points[j][1]-points[i][1], points[j][0]-points[i][0])
+                    cnt[angle] += 1
+            result = max(result, max(cnt.values())+1)
+        return result
+def main():
+    points = [[1,1],[3,2],[5,3],[4,1],[2,3],[1,4]]
+    #points = [[4,5],[4,-1],[4,0]]
+    #points = [[-6,-1],[3,1],[12,3]]
+    
+    
+    s = Solution()
+    result = s.maxPoints2(points)
+    print(result)
+    
+if __name__ == "__main__":
+     main()
+'''
+##############################################################################
+# 189. Rotate Array [MEDIUM]
+##############################################################################   
+
+class Solution(object):
+    def rotate(self, nums, k):
+        """
+        :type nums: List[int]
+        :type k: int
+        :rtype: None Do not return anything, modify nums in-place instead.
+        """
+        L = len(nums)
+        nums[0:L-k].reverse()
+        nums[(L-k):L].reverse()
+        nums.reverse()
+        
+    def rotate2(self, nums, k):
+        
+        pivot = len(nums)-(k)
+        nums.extend(nums[:pivot])
+        for i in range(0,pivot):
+            del nums[0]
+    
+def main():
+    nums = [1,2,3,4,5,6,7]
+    k = 3
+    s = Solution()
+    s.rotate2(nums,k)
+    print(nums)            
+    
+if __name__ == "__main__":
+     main()
+    
+    
